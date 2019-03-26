@@ -5,27 +5,27 @@
 // ----------------------------------------------------------------------
 // main
 
+
 int
 main(int argc, char **argv)
 {
-  //single-threaded
+  // single-threaded
   printf("Hi, just starting.\n");
-  //start running multiple threads
 
-  int test = -1;
-//#pragma omp parallel
-#pragma omp parallel private(test)
+  int sum = 0;
+  int num_threads;
+
+  // start running multiple threads
+#pragma omp parallel reduction(+:sum)
   {
-    //test=500;
     int thread_id = omp_get_thread_num();
-    int n_threads = omp_get_num_threads();
-    //printf("Hi, I'm thread %d of %d\n", thread_id, n_threads);
-    printf("Hello %d/%d test=%d\n", thread_id, n_threads, test);
-    test = thread_id;
+    num_threads = omp_get_num_threads();
+    printf("My number is %d\n", thread_id);
+    sum = thread_id;
   }
-  printf("test = %d\n", test);
+  // back to single-threaded
+  printf("The sum across all threads is %d, expected: %d\n",
+	 sum, num_threads * (num_threads - 1) / 2);
 
-
-  printf("almost done\n");
   return 0;
 }
